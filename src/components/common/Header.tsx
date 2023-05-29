@@ -11,21 +11,21 @@ import { useSession, signIn, signOut  } from "next-auth/react";
 
 const Header = () => {
   const { data , status  } = useSession();
-  const cart = useAppSelector(cartList);
+  // const cart = useAppSelector(cartList);
   const sessionData: any | null | undefined = data;
 
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(cartAction.initCart());
-    dispatch(userAction.getUserInfo());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(cartAction.initCart());
+  //   dispatch(userAction.getUserInfo());
+  // }, [dispatch]);
 
 
-  const cartItems = useAppSelector((state) => state.cart.cartItems);
+  // const cartItems = useAppSelector((state) => state.cart.cartItems);
 
   const handldeLogout = () => {
-    dispatch(userAction.logout());
+    // dispatch(userAction.logout());
     signOut();
   };
 
@@ -48,7 +48,7 @@ const Header = () => {
             </Link>
           </div>
           <Search />
-
+    
           <div className="flex items-center space-x-2 ml-auto">
             <Link
               href="/cart"
@@ -56,19 +56,24 @@ const Header = () => {
             >
               <i className="text-gray-400 w-5 fa fa-shopping-cart"></i>
               <span className="hidden lg:inline ml-1">
-                Cart (<b>{cartItems ? cartItems?.length : 0}</b>)
+                {/* Cart (<b>{cartItems ? cartItems?.length : 0}</b>) */}
               </span>
             </Link>
             {status !== "authenticated" ? (
-              <Link
+              <div>
+         <Link
                 href="/login"
                 className="px-3 py-2 inline-block text-center text-gray-700 bg-white shadow-sm border border-gray-200 rounded-md hover:bg-gray-100 hover:border-gray-300"
               >
                 <i className="text-gray-400 w-5 fa fa-user"></i>
                 <span className="hidden lg:inline ml-1">Sign in</span>
               </Link>
+             
+              </div>
+     
             ) : (
               <>
+               {JSON.stringify(sessionData)}
                 <button
                   onClick={handldeLogout}
                   className="px-3 py-2 inline-block text-center text-gray-700 bg-white shadow-sm border border-gray-200 rounded-md hover:bg-gray-100 hover:border-gray-300"

@@ -22,14 +22,14 @@ interface FormData {
 }
 
 const schema = yup.object().shape({
-  email: yup.string().email().required(),
+  email: yup.string().required(),
   password: yup.string().min(6).required(),
 });
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const error = useAppSelector((state) => state.user.error);
-  const [email, setEmail] = useState("");
+  // const dispatch = useDispatch();
+  // const error = useAppSelector((state) => state.user.error);
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
 
   const router = useRouter();
@@ -58,11 +58,11 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message);
-    }
-  }, [error]);
+  // useEffect(() => {
+  //   if (error) {
+  //     toast.error(error.message);
+  //   }
+  // }, [error]);
 
   return (
     <FormProvider {...methods}>
@@ -73,7 +73,7 @@ const Login = () => {
         <ToastContainer />
         <form onSubmit={handleSubmit(submitHandler)}>
           <h2 className="mb-5 text-2xl font-semibold">Login</h2>
-          <Input label="Email" name="email" />
+          <Input label="email" name="email" />
           <Input label="Password" name="password" />
           <button
             type="submit"

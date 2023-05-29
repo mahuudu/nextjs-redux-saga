@@ -5,5 +5,5 @@ import userSaga from '../sagas/user/userSaga';
 
 
 export default function* rootSaga(){
-    yield all([countSaga(),cartSaga(),userSaga()]);
+    yield all([countSaga()]);
 }

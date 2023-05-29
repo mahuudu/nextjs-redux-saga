@@ -1,69 +1,93 @@
-import NextAuth, { AuthOptions, User } from "next-auth";
+import NextAuth, { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
+  providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials, req) {
+        const res = await fetch("http://localhost:6100/api/v1/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: credentials?.email,
+            password: credentials?.password,
+          }),
+        });
 
+        const data = await res.json();
 
-export const authOptions: AuthOptions = {
-    session: {
-        strategy: "jwt",
-    },
-    providers: [
-        CredentialsProvider({
-            name: 'credentials',
-            credentials: {
-                email: { label: "email", type: "text" },
-                password: { label: "Password", type: "password" }
-            },
-            async authorize(credentials, req) {
+        console.log("data1", data);
 
-                const res = await fetch('http://localhost:6100/api/v1/auth/login', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: credentials?.email,
-                        password: credentials?.password,
-                    })
-                })
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(data.message);
-                }
-                // If no error and we have user data, return it
-                if (res.ok && data) {
-                    return data
-                }
-
-                return null;
-
-            },
-
+        if (!res.ok) {
+          throw new Error(data.message);
         }
-        )
-    ],
-    callbacks: {
-        async jwt({ token, user }) {
+        // If no error and we have user data, return it
+        if (res.ok && data.data.token) {
+          // Make subsequent API call using the received token
+          //   const apiResponse = await fetch(
+          //     "http://localhost:6100/api/v1/other-api-endpoint",
+          //     {
+          //       method: "GET",
+          //       headers: {
+          //         Authorization: `Bearer ${data.token}`,
+          //         // Add other headers as needed
+          //       },
+          //     }
+          //   );
 
-            let data: any = await user;
-            if (data) {
-                return {
-                    token: data?.tokens?.access?.token,
-                    refreshToken: data?.tokens?.refresh?.token,
-                    user: data?.user,
-                };
-            }
-            return token
-        },
-        async session({ session, token }) {
+          if (true) {
+            // const apiData = await apiResponse.json();
+            // Handle the API response data
+            // console.log("API response:", apiData);
+            const newData: any = {
+              token: data?.data.token,
+              user: {
+                name: "du",
+                role: "admin",
+              },
+            };
+            return newData;
+          } else {
+            throw new Error("Failed to fetch data from API");
+          }
 
-            session.user = token as any;
-
-            return session
+          // Return the user data or perform any other actions
+          return data;
         }
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      let data: any = await user;
+      console.log("data1111111111", data);
+
+      if (data) {
+        token.user = data.user;
+        token.accessToken = data?.token;
+        return token;
+      }
+      return token;
     },
-    secret: process.env.NEXTAUTH_SECRET,
-}
-export default NextAuth(authOptions)
+    async session({ session, token, user } : any) {
+      console.log("token", token);
+
+      session = token as any;
+      session.profile = null
+
+      return session;
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+};
+export default NextAuth(authOptions);

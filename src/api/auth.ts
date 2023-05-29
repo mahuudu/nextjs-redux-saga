@@ -5,7 +5,13 @@ const prefixLogin = '/auth'
 
 export const authAPI = {
   login(payload: Login) {
-    return axiosClient.post(`${prefixLogin}/login`, payload);
+    try {
+      const res = axiosClient.post(`${prefixLogin}/login`, payload);
+      return res?.data;
+    } catch (error) {
+       throw error
+    }
+   
   },
   logout(payload: Login) {
     return axiosClient.post(`${prefixLogin}/logout`, payload);

@@ -5,7 +5,7 @@ import Header from "../common/Header";
 const MainLayout = ({ children }: PropsWithChildren,) => {
   return (
     <>
-        <Header></Header>
+        {/* <Header></Header> */}
         <main>{children}</main>
     </>
   );

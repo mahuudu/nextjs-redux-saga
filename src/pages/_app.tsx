@@ -21,7 +21,7 @@ function MyApp({
   const Layout = Layouts[Component.Layout] ?? ((props: any) => props.children);
   return (
     <SessionProvider session={session}>
-      <CacheProvider value={emotionCache}>
+
         <SWRConfig
           value={{
             fetcher: (url) => axiosClient.get(url),
@@ -32,9 +32,9 @@ function MyApp({
             <Component {...pageProps} />
           </Layout>
         </SWRConfig>
-      </CacheProvider>
+
     </SessionProvider>
   );
 }
 
-export default wrapper.withRedux(MyApp);
+export default MyApp;
